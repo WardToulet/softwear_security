@@ -3,15 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Auth0Provider } from '@auth0/auth0-react';
+import { Auth0Provider } from './auth';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Auth0Provider
-      domain="wardtoulet.eu.auth0.com"
-      clientId="ghcwVINOhjvywKkF2dLzPSfNEt1e3agO"
-      redirectUri={window.location.origin}
-    >
+    <Auth0Provider>
       <App />
     </Auth0Provider>
   </React.StrictMode>,
