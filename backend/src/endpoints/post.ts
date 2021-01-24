@@ -1,9 +1,8 @@
 import { Router, Request, Response } from 'express';
 import bodyParser from 'body-parser';
-
 import responseType from '../middleware/responseType';
-
 import YAML from 'yaml';
+import Post from '../models/post';
 
 const router = Router();
 
@@ -54,19 +53,49 @@ router.use(responseType({
 
 router.route("/")
   .options(options)
-  .get((_req, res) => res.sendResponse([
-    { id: 0, msg: 'this is a test' },
-    { id: 1, msg: 'another test' },
-  ]))
+  .get(async (_req, res) => {
+    res.sendResponse(await Post.find())
+  })
+  // TODO: check the schema of the body
+  .post(bodyParser.json(), async (req, res) => {
+    res.sendResponse(await new Post(req.body).save());
+  })
   .all(methodNotSupported);
 
 router.route("/:id")
   .options(options)
-  .get((_req, res) => res.sendResponse({ id: 0, msg: 'this is a test' }))
-  .post((_req, res) => res.sendResponse({ id: 0, msg: 'this is a test' }))
-  .delete((_req, res) => res.sendResponse({ id: 0, msg: 'this is a test' }))
-  .patch((_req, res) => res.sendResponse({ id: 0, msg: 'this is a test' }))
-  .put((_req, res) => res.sendResponse({ id: 0, msg: 'this is a test' }))
+  .get(async (req, res) => { 
+    const post = await Post.findOne({ '_id': req.params['id']});
+    if(post) {
+      res.sendResponse(post);
+    } else {
+      res.status(404).sendResponse({
+        msg: `Postd with id "${req.params.id}" not found`,
+      })
+    }
+  })
+  .delete(async (req, res) => {
+    const post = await Post.findOneAndDelete({ '_id': req.params.id });
+    if(post) {
+      res.sendResponse(post);
+    } else {
+      res.status(404).sendResponse({
+        msg: `Postd with id "${req.params.id}" not found`,
+      })
+    }
+  })
+  // TODO: check the schema of the body
+  .put(bodyParser.json(), async (req, res) => {
+    // This does not return the updated module
+    const post = await Post.findOneAndReplace({ "_id": req.params.id }, req.body, { new: true });
+    if(post) {
+      res.sendResponse(post);
+    } else {
+      res.status(404).sendResponse({
+        msg: `Postd with id "${req.params.id}" not found`,
+      });
+    }
+  })
   .all(methodNotSupported)
 
-export default router;
+  export default router;

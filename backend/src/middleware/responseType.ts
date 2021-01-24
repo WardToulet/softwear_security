@@ -17,7 +17,7 @@ const parseMimeType = (raw: string): MimeType => {
     major = '*',
     minor = '*',
     ...rawParams
-  ] = raw.split(/[\/;]/);
+  ] = raw.toLowerCase().split(/[\/;]/);
 
   return {
     major,
@@ -75,7 +75,6 @@ const responseType = (acceptedTypes: AcceptedTypes) => {
 
       const { stringify } = acceptedTypes[major][minor];
 
-      // TODO: replace JSON.stringify with the correct strinify function
       res.sendResponse = (input: any) => {
         res.send(stringify(input))
       }

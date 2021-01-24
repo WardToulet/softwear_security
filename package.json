@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@types/cors": "^2.8.9",
+    "@types/msgpack": "^0.0.30",
+    "msgpack": "^1.0.3"
+  }
+}
